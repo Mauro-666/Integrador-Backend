@@ -1,12 +1,16 @@
-<h1>Proximamente armamos el login</h1>
-
-{{#if conocido}}
-    <p>Hola, {{nombre}} <a href="/salir">Salir</a></p>
-    {{/if}}
-
-{{#unless conocido}}
-    <p>Ingresa tus credenciales</p>
-    <form action="/ingresar" method="post">
-        <input type="text" name="nombre"><button>Ingresar</button>
-    </form>
-    {{/unless}}
+<div class="cont">
+    <div class="login">
+        <form action="/admin/login" method="post">
+            <div class="mb-3">
+                <input type="text" class="form-control" id="exampleInputUser" placeholder="Usuario" name="usuario">
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" id="exampleInputPassword" placeholder="Contraseña" name="password">
+            </div>
+            <button type="submit" class="btn btn-primary">Ingresar</button>
+        </form>
+        {{#if error}}
+            <p>Usuario y/o Contraseña incorrectos</p>
+        {{/if}}
+    </div>
+</div>

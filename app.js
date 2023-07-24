@@ -4,11 +4,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+require('dotenv').config();
+
 var session =require('express-session');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var loginRouter = require('./routes/admin/login');
+var loginRouter = require('./routes/Admin/login');
+var adminRouter = require('./routes/Admin/administrador');
 
 var app = express();
 
@@ -21,16 +24,33 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use('/admin/login', loginRouter);
+
 
 app.use(session({
   secret:'Amasijo7366',
+  cookie: { maxAge: null},
   resave: false,
   saveUninitialized: true
 }));
 
+secured = async (req,res,next)=> {
+  try {
+    console.log(req.session.id_usuario);
+    if (req.session.id_usuario){
+      next();
+    }else {
+      res.redirect('/admin/login');
+    }
+  } catch (error){
+    console.log(error);
+  }
+};
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/admin/login', loginRouter);
+app.use('/admin/administrador', secured , adminRouter);
 
 app.get('/', function(req,res){
   if(req.session.nombre){
@@ -40,15 +60,15 @@ app.get('/', function(req,res){
   }
 });
 
-// app.get('/', function (req,res){
-//   var conocido = Boolean(req.session.nombre);
+app.get('/', function (req,res){
+  var conocido = Boolean(req.session.nombre);
 
-//   res.render('index',{
-//     title: 'Sesiones en Express.js',
-//     conocido: conocido,
-//     nombre: req.session.nombre
-//   });
-// });
+  res.render('index',{
+    title: 'Sesiones en Express.js',
+    conocido: conocido,
+    nombre: req.session.nombre
+  });
+});
 
 
 app.post('/ingresar', function (req,res){
